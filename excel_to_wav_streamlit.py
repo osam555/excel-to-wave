@@ -76,50 +76,58 @@ class ExcelToWavConverterStreamlit:
             if uploaded_file:
                 st.session_state.excel_path = uploaded_file
 
-        # 언어 및 범위 선택 섹션
+        # 언어 및 범위 설정 섹션을 한 줄로 표시
         with st.expander("언어 및 범위 설정", expanded=True):
-            col1, col2 = st.columns(2)
+            col1, col2, col3, col4 = st.columns([1, 1, 1, 1])
             with col1:
                 language = st.radio("언어 선택", ["en", "ko", "zh"], index=["en", "ko", "zh"].index(st.session_state.selected_language), key="lang_radio")
                 st.session_state.selected_language = language
             with col2:
-                start_row = st.number_input("시작 행", min_value=1, value=st.session_state.start_row)
-                end_row = st.number_input("끝 행", min_value=start_row, value=st.session_state.end_row)
+                start_row = st.number_input("시작 행", min_value=1, value=st.session_state.start_row, key="start_row_input")
                 st.session_state.start_row = start_row
+            with col3:
+                end_row = st.number_input("끝 행", min_value=start_row, value=st.session_state.end_row, key="end_row_input")
                 st.session_state.end_row = end_row
 
-        # 음성 및 속도 설정 섹션
+        # 음성 및 속도 설정 섹션을 한 줄로 표시
         with st.expander("음성 및 속도 설정", expanded=True):
             if st.session_state.voices_loaded: # 음성 목록이 로드된 경우에만 표시
-                if st.session_state.selected_language == 'en':
-                    voice_options = st.session_state.eng_voices
-                    default_voice_index = voice_options.index(st.session_state.eng_voice) if st.session_state.eng_voice in voice_options else 0
-                    selected_voice = st.selectbox("영어 음성 선택", voice_options, index=default_voice_index, key="eng_voice_select")
-                    st.session_state.eng_voice = selected_voice
-                    speed = st.slider("영어 속도 조절", 0.5, 2.0, st.session_state.eng_speed, step=0.1, key="eng_speed_slider")
-                    st.session_state.eng_speed = speed
-                    if st.button("영어 음성 샘플 재생", key="play_eng_sample"):
-                        self.play_sample("en")
+                col5, col6 = st.columns(2)
+                with col5:
+                    if st.session_state.selected_language == 'en':
+                        voice_options = st.session_state.eng_voices
+                        default_voice_index = voice_options.index(st.session_state.eng_voice) if st.session_state.eng_voice in voice_options else 0
+                        selected_voice = st.selectbox("영어 음성 선택", voice_options, index=default_voice_index, key="eng_voice_select")
+                        st.session_state.eng_voice = selected_voice
+                    elif st.session_state.selected_language == 'ko':
+                        voice_options = st.session_state.kor_voices
+                        default_voice_index = voice_options.index(st.session_state.kor_voice) if st.session_state.kor_voice in voice_options else 0
+                        selected_voice = st.selectbox("한국어 음성 선택", voice_options, index=default_voice_index, key="kor_voice_select")
+                        st.session_state.kor_voice = selected_voice
+                    elif st.session_state.selected_language == 'zh':
+                        voice_options = st.session_state.chn_voices
+                        default_voice_index = voice_options.index(st.session_state.chn_voice) if st.session_state.chn_voice in voice_options else 0
+                        selected_voice = st.selectbox("중국어 음성 선택", voice_options, index=default_voice_index, key="chn_voice_select")
+                        st.session_state.chn_voice = selected_voice
 
-                elif st.session_state.selected_language == 'ko':
-                    voice_options = st.session_state.kor_voices
-                    default_voice_index = voice_options.index(st.session_state.kor_voice) if st.session_state.kor_voice in voice_options else 0
-                    selected_voice = st.selectbox("한국어 음성 선택", voice_options, index=default_voice_index, key="kor_voice_select")
-                    st.session_state.kor_voice = selected_voice
-                    speed = st.slider("한국어 속도 조절", 0.5, 2.0, st.session_state.kor_speed, step=0.1, key="kor_speed_slider")
-                    st.session_state.kor_speed = speed
-                    if st.button("한국어 음성 샘플 재생", key="play_kor_sample"):
-                        self.play_sample("ko")
+                with col6:
+                    if st.session_state.selected_language == 'en':
+                        speed = st.slider("영어 속도 조절", 0.5, 2.0, st.session_state.eng_speed, step=0.1, key="eng_speed_slider")
+                        st.session_state.eng_speed = speed
+                        if st.button("영어 음성 샘플 재생", key="play_eng_sample"):
+                            self.play_sample("en")
 
-                elif st.session_state.selected_language == 'zh':
-                    voice_options = st.session_state.chn_voices
-                    default_voice_index = voice_options.index(st.session_state.chn_voice) if st.session_state.chn_voice in voice_options else 0
-                    selected_voice = st.selectbox("중국어 음성 선택", voice_options, index=default_voice_index, key="chn_voice_select")
-                    st.session_state.chn_voice = selected_voice
-                    speed = st.slider("중국어 속도 조절", 0.5, 2.0, st.session_state.chn_speed, step=0.1, key="chn_speed_slider")
-                    st.session_state.chn_speed = speed
-                    if st.button("중국어 음성 샘플 재생", key="play_chn_sample"):
-                        self.play_sample("zh")
+                    elif st.session_state.selected_language == 'ko':
+                        speed = st.slider("한국어 속도 조절", 0.5, 2.0, st.session_state.kor_speed, step=0.1, key="kor_speed_slider")
+                        st.session_state.kor_speed = speed
+                        if st.button("한국어 음성 샘플 재생", key="play_kor_sample"):
+                            self.play_sample("ko")
+
+                    elif st.session_state.selected_language == 'zh':
+                        speed = st.slider("중국어 속도 조절", 0.5, 2.0, st.session_state.chn_speed, step=0.1, key="chn_speed_slider")
+                        st.session_state.chn_speed = speed
+                        if st.button("중국어 음성 샘플 재생", key="play_chn_sample"):
+                            self.play_sample("zh")
             else:
                 st.text("음성 목록 로딩 중...")
 
