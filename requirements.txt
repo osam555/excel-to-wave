@@ -1,8 +1,8 @@
-streamlit==1.26.0
+streamlit==1.30.0  # 최신 버전으로 업그레이드
 edge-tts==6.1.9
 openpyxl==3.1.2
 pydub==0.25.1
 ffmpeg-python==0.2.0
 numpy==1.26.4
 pandas==2.1.4
-pillow==9.5.0  # 10 미만 버전으로 다운그레이드
+pillow==10.1.0  # 최신 버전 유지
