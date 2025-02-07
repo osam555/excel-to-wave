@@ -5,4 +5,4 @@ pydub==0.25.1
 ffmpeg-python==0.2.0
 numpy==1.26.4
 pandas==2.1.4
-pillow==10.1.0  # 최신 버전으로 업데이트
+pillow==9.5.0  # 10 미만 버전으로 다운그레이드
